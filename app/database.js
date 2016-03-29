@@ -1,7 +1,7 @@
 // load all the things we need
 var mysql    = require("mysql");
 // load the database variables
-var configDB = require('../config/databaseConfig.js');
+var configDB = require('../config/config.js').database;
 // load utilities
 var util     = require('./utilities.js');
 
