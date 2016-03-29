@@ -1,0 +1,23 @@
+<% 
+  if(!locals.extra) {
+    locals.extra = '';
+  } 
+%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=0">
+  
+  <title><%= title %></title>
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.css" rel="stylesheet">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.js"></script> 
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script> 
+</head>
+<body>
+  <div class="container" style="padding-top:50px;">
+    <div class="row">
+      <div class="col-xs-12 <%= extra %>">
+        <legend><%= title%><span class="pull-right"><a href="<%= config['blogUrl']%>/admin/logout">logout</a></span></legend>

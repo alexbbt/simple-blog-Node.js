@@ -1,0 +1,30 @@
+<% var title = config['title'] %>
+<% include ../partials/header %>
+    <!-- Main Content -->
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+<%
+    if(error) {
+%>
+        <div class="alert alert-danger alert-dismissible" role="alert"><a href="<%= config['blogUrl']%>" type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></a><strong>Oh snap! </strong>Looks like that blog does not exist.</div>
+<%
+    }
+    for(var i = 0; i < blogs.length; i++) {
+      var blog = blogs[i];
+%>
+<% include ../partials/blogPreview %>
+<%
+    }
+    if (!blogs.length) {
+%>
+        <article class="blog-post">
+          <div class="blog-post-body">
+            <p>There are no blog enteries at this time</p>
+          </div>
+        </article>
+<%
+    }
+%>
+      </div>
+    </div>
+<% include ../partials/footer %>

@@ -1,0 +1,9 @@
+.blog-title, .blog-title > h1 {
+	font-size: 2em;
+}
+
+.updated {
+	text-align:center;
+	font-size:1em;
+	font-weight: 200;
+}

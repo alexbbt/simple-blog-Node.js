@@ -1,0 +1,15 @@
+{
+  "name": "node-blog",
+  "main": "server.js",
+  "dependencies": {
+    "bcryptjs": "^2.3.0",
+    "body-parser": "^1.15.0",
+    "ejs": "^1.0.0",
+    "express": "^4.6.1",
+    "express-ejs-layouts": "^1.1.0",
+    "fs": "0.0.2",
+    "mysql": "^2.10.2",
+    "passport": "^0.3.2",
+    "passport-http": "^0.3.0"
+  }
+}

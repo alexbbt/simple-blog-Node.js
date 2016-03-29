@@ -1,0 +1,263 @@
+<% var extra =  'col-sm-10 col-sm-offset-1 col-md-4 col-md-offset-0' %>
+<% include ./header %>
+
+        <div class="row">
+          <div class="form-group col-xs-12">
+            <label for="">Title</label>
+            <input type="text" class="form-control" id="title" placeholder="Blog Title" value="<%= blog['title']%>">
+          </div>
+          <div class="form-group col-xs-12">
+            <label for="">Author</label>
+            <select name="author" id="author" class="form-control" required="required">
+<%
+    for (var i = 0; i < authors.length; i++) {
+%>
+              <option value="<%= authors[i]['authorID']%>" <%=(authors[i]['authorID'] == blog['authorID']) ? 'selected' : ''%>><%= authors[i]['authorName']%></option>
+<%
+    }
+%>
+            </select>
+          </div>
+          <div class="form-group col-xs-12">
+            <label for="">Preview Text</label>
+            <textarea id="preview" class="form-control" rows="3"><%= blog['preview']%></textarea>
+          </div>
+<%
+    if (edit) {
+%>
+          <div class="form-group col-xs-12">
+            <label>Save As? <input type="checkbox" id="saveAs"> <small>(Must have a different Title!)</small></label>
+          </div>
+<%
+    }
+%>        
+          <div class="form-group col-xs-12 hidden-xs hidden-sm">
+<%
+    if (edit) {
+%>
+            <button type="button" class="btn btn-danger delete">Delete</button>
+<%
+    }
+%> 
+            <button type="button" class="btn btn-success save">Save</button>
+            <button type="button" class="btn btn-warning back">Back</button>
+<%
+    if (edit) {
+%>
+            <button type="button" class="btn btn-info view">View Live</button>
+<%
+    }
+%> 
+          </div>
+          <div class="form-group col-xs-12">
+            <label>Word Count: <span id="wordCount"></span></label>
+          </div>
+        </div>
+        
+      </div>
+      <div class="col-xs-12 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-0">
+        <div id="summernote"><%- blog['text'] %></div>
+      </div>
+      <div class="col-xs-12 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 hidden-md hidden-lg">
+<%
+    if (edit) {
+%>
+        <button type="button" class="btn btn-danger delete">Delete</button>
+<%
+    }
+%> 
+        <button type="button" class="btn btn-success save">Save</button>
+        <button type="button" class="btn btn-warning back">Back</button>
+<%
+    if (edit) {
+%>
+        <button type="button" class="btn btn-info view">View Live</button>
+<%
+    }
+%> 
+      </div>
+    </div>
+  </div>
+
+  <link href="//cdnjs.cloudflare.com/ajax/libs/summernote/0.7.1/summernote.css" rel="stylesheet">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/summernote/0.7.1/summernote.js"></script>
+
+  <style type="text/css">
+    .note-alert{
+      position: fixed;
+      width: 360px;
+      z-index: 2060;
+      top: 20px;
+      right: 20px;
+    }
+  </style>
+  
+  <script>
+    var unsavedChanges = false;
+
+    $(document).ready(function() {
+
+      $('#summernote').summernote({
+        placeholder: 'write your blog here...',
+        height: ($(window).height() - 160),
+        callbacks: {
+          onChange: function() {
+            counter()
+            unsavedChanges = true;
+          }
+        }
+      });
+
+      window.onbeforeunload = function(e) {
+        if (unsavedChanges) {
+          return 'You have unsaved changes!';
+        }
+        else {
+          return
+        }
+      };
+
+      counter();
+    });
+    var save = function(then) {
+      // Post to save file
+      var alert = note.info('Saving...');
+      $.post( "<%= config['blogUrl']%>/admin/save", 
+        { 
+          method: 'save',
+          title: $('#title').val(),
+          author: $('#author').val(),
+          preview: $('#preview').val(),
+          saveAs: $('#saveAs').is(':checked'),
+          oldTitle: "<%= blog['url']%>",
+          text: $('#summernote').summernote('code')
+        }).then(function(response) {
+          response = JSON.parse(response);
+          alert.close();
+          if (response['status'] == 200) {
+            note.success('Saved', 1000);
+            if (response['newURL'] != 'false') {
+              window.location.replace('<%= config['blogUrl']%>/admin/edit/' + response['newURL']);
+            }
+            unsavedChanges = false;
+          } else{
+            note.error('Error Saving: ' + response['message'], 5000);
+          };
+          
+          //then();
+        });
+    }
+    $(window).bind('keydown', function(event) {
+      if (event.ctrlKey || event.metaKey) {
+        switch (String.fromCharCode(event.which).toLowerCase()) {
+        case 's':
+          event.preventDefault();
+          save(function( data ) {
+              window.location.reload();
+          });
+          break;
+        }
+      }
+    });
+    $('.save').click(function() {
+      save(function( data ) {
+          window.location.replace('<%= config['blogUrl']%>/admin');
+      });
+    });
+    $('.delete').click(function() {
+      deleteBlog("<%= blog['url']%>", function() {
+        window.location.replace('../');
+      });
+    });
+    $('.back').click(function() {
+      if (!unsavedChanges || confirm("Would you like to go back with out saving changes?")) {
+        window.location.replace("<%= config['blogUrl']%>/admin/");
+      }
+    });
+    $('.view').click(function() {
+      if (!unsavedChanges || confirm("You have unsaved changes, would you like to view the last saved version?")) {
+        window.open("<%= config['blogUrl']%>/<%= blog['url']%>", '_blank');
+      }
+    });
+
+    var deleteBlog = function(blog, then) {
+      then = then || function() {
+        window.location.replace('./');
+      }
+      if (confirm("Are you sure you want to delete: " + blog)) {
+        // Post to save file
+        $.post( "<%= config['blogUrl']%>/admin/save", 
+          { 
+            method: 'delete',
+            oldTitle: blog,
+          }, 
+          function( data ) {
+            then();
+        });
+      };
+    }
+    var counter = function() {
+      var value = $('#summernote').summernote('code');
+      value = value.replace(/<(?:.|\n)*%>/gm, '');
+
+      if (value.length == 0) {
+          $('#wordCount').html(0);
+          // $('#totalChars').html(0);
+          // $('#charCount').html(0);
+          // $('#charCountNoSpace').html(0);
+          return;
+      }
+
+      var regex = /\s+/gi;
+      var wordCount = value.trim().replace(regex, ' ').split(' ').length;
+      // var totalChars = value.length;
+      // var charCount = value.trim().length;
+      // var charCountNoSpace = value.replace(regex, '').length;
+
+      $('#wordCount').html(wordCount);
+      // $('#totalChars').html(totalChars);
+      // $('#charCount').html(charCount);
+      // $('#charCountNoSpace').html(charCountNoSpace);
+    };
+    var note = (function() {
+      var self = {};
+
+      self.alert = function(text, time) {
+        return popup({text: text, type: 'warning', time: time});
+      }
+      self.success = function(text, time) {
+        return popup({text: text, type: 'success', time: time});
+      }
+      self.info = function(text, time) {
+        return popup({text: text, type: 'info', time: time});
+      }
+      self.error = function(text, time) {
+        return popup({text: text, type: 'danger', time: time});
+      }
+      var popup = function(options) {
+        if(!$('body > .alert-box').length) {
+          $('body').append('<div class="alert-box"></div>');
+        }
+
+        var object = $('<div class="alert alert-'+options['type']+' alert-dismissible fade in note-alert" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>'+options['text']+'</div>');
+
+        $('.alert-box').html(object);
+
+        object.close = function() {
+          object.remove();
+        }
+
+        if (options['time']) {
+          setTimeout(function() {
+            object.close()
+          }, options['time']);
+        };
+
+        return object;
+      }
+
+      return self;
+    })();
+  </script>
+
+<% include ./footer %>

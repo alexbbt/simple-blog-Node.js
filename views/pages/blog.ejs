@@ -1,0 +1,40 @@
+<% var title = config['title'] + ' - ' + blog['title']%>
+<% include ../partials/header %>
+    <!-- Post Content -->
+        <article>
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <article class="blog-post">
+                        <div class="blog-post-body">
+                            <h2><%= blog['title']%></h2>
+                            <div class="post-meta">
+                                <span>by <a href="<%= blog['authorURL']%>"><%= blog['authorName']%></a></span>
+                                /
+                                <span><i class="fa fa-clock-o"></i><%= blog['timestamp']%></span></div>
+                            <div class="blog-post-text">
+<%
+        if (false && blog['updated'] != 'December 31, 1969') {
+%>
+                                <div class="updated">Updated on <%= blog['updated']%></div>
+<%
+        }
+%>
+                                <%- blog['text'] %>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </article>
+
+        <!-- Home button -->
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="pager">
+                    <li class="previous">
+                        <a href="<%= config['blogUrl']%>"><span aria-hidden="true">&larr;</span> Back to home</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+<% include ../partials/footer %>
