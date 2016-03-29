@@ -15,7 +15,7 @@ Getting Started
 
 Example
 -------
-A working example can be found here: [https://www.bell-towne.com/blog_beta](https://www.bell-towne.com/blog_beta)
+A working example can be found here: [https://www.bell-towne.com/blog_example](https://www.bell-towne.com/blog_example)
 
 You can access the Admin page, but nothing will be saved.
 

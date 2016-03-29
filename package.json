@@ -1,6 +1,16 @@
 {
+  "author": "Alexander Bell-Towne <alexbbt@uw.edu> (bell-towne.com)",
   "name": "node-blog",
+  "description": "Node Template",
+  "version": "0.0.0",
+  "license" : "CC0-1.0",
   "main": "server.js",
+  "repository": {
+    "url": ""
+  },
+  "engines": {
+    "node": "~4.2.1"
+  },
   "dependencies": {
     "bcryptjs": "^2.3.0",
     "body-parser": "^1.15.0",
@@ -11,5 +21,7 @@
     "mysql": "^2.10.2",
     "passport": "^0.3.2",
     "passport-http": "^0.3.0"
-  }
+  },
+  "devDependencies": {},
+  "optionalDependencies": {}
 }
